@@ -13,41 +13,14 @@ class Api_Sync_Database {
         global $wpdb;
         $table_name = $wpdb->prefix . $table_suffix;
 
-        // Отримуємо дані з API
-        $response = wp_remote_get($api_url, array(
-            'headers' => array(
-                'X-Shopify-Access-Token' => $api_token,
-                'Content-Type' => 'application/json'
-            )
-        ));
+        // Використовуємо новий клас для отримання даних з API
+        $api_handler = new Api_Sync_Api_Handler();
+        $data = $api_handler->get_api_data($api_url, $api_token);
 
-        if (is_wp_error($response)) {
-            $this->write_log('Помилка при отриманні даних: ' . $response->get_error_message());
-            wp_send_json_error('Помилка при отриманні даних');
+        // Перевіряємо, чи є помилка в отриманні даних
+        if (is_wp_error($data)) {
+            wp_send_json_error($data->get_error_message());
             return;
-        }
-
-        $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
-
-        // Логування отриманих даних
-        $this->write_log('Отримані дані з API: ' . print_r($data, true));
-
-        if (isset($data['errors'])) {
-            $this->write_log('Помилка API: ' . print_r($data['errors'], true));
-            wp_send_json_error('Помилка API: ' . $data['errors']);
-            return;
-        }
-
-        if (empty($data)) {
-            $this->write_log('Немає даних для збереження');
-            wp_send_json_error('Немає даних для збереження');
-            return;
-        }
-
-        if (!is_array($data)) {
-            $this->write_log('Дані не є масивом. Перетворення об\'єкта на масив.');
-            $data = (array)$data;
         }
 
         if (count($data) == 1 && is_array(reset($data))) {
@@ -86,6 +59,7 @@ class Api_Sync_Database {
 
         wp_send_json_success('Дані успішно отримані та збережені');
     }
+
 
     // Динамічне створення таблиці на основі отриманих даних
     private function create_dynamic_table($table_name, $data) {

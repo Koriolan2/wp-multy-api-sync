@@ -13,6 +13,8 @@ define('WP_MULTI_API_SYNC_PATH', plugin_dir_path(__FILE__));
 require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-post-type.php';
 require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-metabox.php';
 require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-database.php';
+require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-api-handler.php';
+
 
 // Реєструємо користувацький тип запису
 function wp_multi_api_sync_register_post_type() {
