@@ -18,6 +18,7 @@ class Api_Sync_Fetch_Metabox {
         // Отримуємо збережені значення метаданих
         $fetch_method = get_post_meta($post->ID, '_api_fetch_method', true) ?: 'default';
         $schedule = get_post_meta($post->ID, '_api_fetch_schedule', true) ?: 'default';
+        $last_fetched = get_post_meta($post->ID, '_last_fetched', true); // Останнє звернення до API
 
         // Поле вибору способу отримання даних
         echo '<label for="api_fetch_method" style="font-weight: bold;">Спосіб отримання даних:</label>';
@@ -27,10 +28,10 @@ class Api_Sync_Fetch_Metabox {
         echo '<option value="schedule"' . selected($fetch_method, 'schedule', false) . '>Отримати за графіком</option>';
         echo '</select>';
 
-        // Кнопка для отримання даних, яка буде прихована за замовчуванням
+        // Кнопка для отримання даних, прихована за замовчуванням
         echo '<button type="button" id="fetch_data_button" class="button button-primary" data-post-id="' . $post->ID . '" style="width: 100%; margin-bottom: 10px; display: none;">Отримати дані</button>';
 
-        // Випадаючий список для графіка, також прихований за замовчуванням
+        // Випадаючий список для графіка, прихований за замовчуванням
         echo '<label for="api_fetch_schedule" style="font-weight: bold; display: none;" id="fetch_schedule_label">Графік отримання даних:</label>';
         echo '<select name="api_fetch_schedule" id="api_fetch_schedule" style="width: 100%; margin-bottom: 10px; display: none;">';
         echo '<option value="default"' . selected($schedule, 'default', false) . '>Оберіть графік</option>';
@@ -38,6 +39,13 @@ class Api_Sync_Fetch_Metabox {
         echo '<option value="hourly"' . selected($schedule, 'hourly', false) . '>Щогодини</option>';
         echo '<option value="daily"' . selected($schedule, 'daily', false) . '>Щодня</option>';
         echo '</select>';
+
+        // Інформаційне поле для дати останнього отримання даних
+        if ($last_fetched) {
+            echo '<p id="last_fetched_info" style="font-weight: bold;">Останнє отримання даних: ' . esc_html($last_fetched) . '</p>';
+        } else {
+            echo '<p id="last_fetched_info" style="display: none;"></p>';
+        }
     }
 
     // Збереження метаданих при збереженні поста
@@ -62,7 +70,7 @@ class Api_Sync_Fetch_Metabox {
             $fetch_method = sanitize_text_field($_POST['api_fetch_method']);
             update_post_meta($post_id, '_api_fetch_method', $fetch_method);
 
-            // Якщо користувач обрав "Отримати вручну", видаляємо метадані про графік
+            // Якщо обрано "Отримати вручну", видаляємо метадані про графік
             if ($fetch_method === 'manual') {
                 delete_post_meta($post_id, '_api_fetch_schedule');
             }
