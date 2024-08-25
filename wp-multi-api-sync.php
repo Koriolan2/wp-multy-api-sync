@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP Multi API Sync
  * Description: Sync products from multiple APIs and store them in the database.
- * Version: 2.0
+ * Version: 2.1.1
  * Author: Yuriy Kozmin aka Yuriy Knysh
  */
 
@@ -14,7 +14,7 @@ require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-post-type.php';
 require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-metabox.php';
 require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-database.php';
 require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-api-handler.php';
-
+require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-fetch-metabox.php'; // Новий клас
 
 // Реєструємо користувацький тип запису
 function wp_multi_api_sync_register_post_type() {
