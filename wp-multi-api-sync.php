@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP Multi API Sync
  * Description: Sync products from multiple APIs and store them in the database.
- * Version: 2.1.1
+ * Version: 2.1
  * Author: Yuriy Kozmin aka Yuriy Knysh
  */
 
@@ -13,32 +13,43 @@ define('WP_MULTI_API_SYNC_PATH', plugin_dir_path(__FILE__));
 require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-post-type.php';
 require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-metabox.php';
 require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-database.php';
-require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-api-handler.php';
-require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-fetch-metabox.php'; // Новий клас
+require_once WP_MULTI_API_SYNC_PATH . 'includes/class-api-sync-fetch-metabox.php'; // Новий клас для метабоксу "Отримати дані"
 
-// Реєструємо користувацький тип запису
-function wp_multi_api_sync_register_post_type() {
+// Реєструємо користувацький тип запису та метабокси
+function wp_multi_api_sync_init() {
+    // Реєстрація користувацького типу запису
     $post_type = new Api_Sync_Post_Type();
     $post_type->register_post_type();
-}
-add_action('init', 'wp_multi_api_sync_register_post_type');
+    
+    // Реєстрація метабоксів
+    add_action('add_meta_boxes', function() {
+        // Основний метабокс
+        $metabox = new Api_Sync_Metabox();
+        $metabox->register_metabox();
 
-// Підключаємо метабокси
-function wp_multi_api_sync_register_metabox() {
-    $metabox = new Api_Sync_Metabox();
-    $metabox->register_metabox();
+        // Метабокс для отримання даних
+        $fetch_metabox = new Api_Sync_Fetch_Metabox();
+        $fetch_metabox->register();
+    });
 }
-add_action('add_meta_boxes', 'wp_multi_api_sync_register_metabox');
+add_action('init', 'wp_multi_api_sync_init');
 
-// Обробка збереження метаданих і натискання кнопки "Отримати дані"
+// Збереження метаданих при збереженні поста
 function wp_multi_api_sync_save_post($post_id) {
+    // Збереження даних з основного метабоксу
     $metabox = new Api_Sync_Metabox();
     $metabox->save_metabox($post_id);
+
+    // Збереження вибору способу отримання даних
+    $fetch_metabox = new Api_Sync_Fetch_Metabox();
+    $fetch_metabox->save_metabox($post_id);
 }
+
 add_action('save_post', 'wp_multi_api_sync_save_post');
 
-// Підключаємо код для роботи з базою даних
+// Обробка запиту для отримання даних через AJAX
 function wp_multi_api_sync_fetch_data() {
+    // Підключення класу для роботи з базою даних
     $database = new Api_Sync_Database();
     $database->fetch_data();
 }
@@ -50,12 +61,19 @@ function wp_multi_api_sync_display_admin_notices() {
 }
 add_action('admin_notices', 'wp_multi_api_sync_display_admin_notices');
 
-// Додаємо JavaScript для кнопки "Отримати дані"
+// Підключаємо JavaScript для метабоксу з уникненням кешування
 function wp_multi_api_sync_enqueue_scripts() {
-    wp_enqueue_script('api_sync_script', plugins_url('assets/js/api-sync.js', __FILE__), array('jquery'), null, true);
-    wp_localize_script('api_sync_script', 'apiSyncData', array(
+    // Додаємо timestamp до JS файлу
+    $version = filemtime(plugin_dir_path(__FILE__) . 'assets/js/api-sync-metabox.js');
+
+    wp_enqueue_script('api_sync_metabox_script', plugins_url('assets/js/api-sync-metabox.js', __FILE__), array('jquery'), $version, true);
+    
+    // Локалізуємо скрипт, щоб передати AJAX URL і nonce
+    wp_localize_script('api_sync_metabox_script', 'apiSyncData', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('fetch_api_data_nonce')
     ));
 }
+
+
 add_action('admin_enqueue_scripts', 'wp_multi_api_sync_enqueue_scripts');
