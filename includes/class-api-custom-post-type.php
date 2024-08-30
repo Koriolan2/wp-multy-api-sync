@@ -60,7 +60,7 @@ class API_Custom_Post_Type {
 
         if ($post_type === 'api_connector') {
             // Видаляємо всі мета-бокси, окрім тих, що створені вашим плагіном
-            remove_meta_box('submitdiv', 'api_connector', 'core');  // Стандартний мета-бокс для збереження
+            // remove_meta_box('submitdiv', 'api_connector', 'core');  // Стандартний мета-бокс для збереження
             remove_meta_box('slugdiv', 'api_connector', 'normal'); // Мета-бокс для редагування слагу
             remove_meta_box('postcustom', 'api_connector', 'normal'); // Мета-бокс для користувацьких полів
             remove_meta_box('wpseo_meta', 'api_connector', 'normal'); // Yoast SEO

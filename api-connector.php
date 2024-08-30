@@ -12,7 +12,7 @@ License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
-// Підключаємо класи
+// Підключаємо необхідні класи
 require_once plugin_dir_path(__FILE__) . 'includes/class-api-custom-post-type.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-plugin-logger.php';
 require_once plugin_dir_path(__FILE__) . 'admin/class-api-metabox.php';
@@ -37,22 +37,57 @@ function api_connector_autoload_api_classes() {
 }
 api_connector_autoload_api_classes();
 
-// Підключаємо стилі для адміністративної панелі
-function api_connector_admin_styles($hook_suffix) {
+// Підключаємо стилі та скрипти для адміністративної панелі
+function api_connector_admin_scripts($hook_suffix) {
     global $post_type;
 
     if ($post_type === 'api_connector') {
+        // Підключення стилів
         $css_file = plugin_dir_path(__FILE__) . 'assets/admin-style.css';
         $css_url = plugin_dir_url(__FILE__) . 'assets/admin-style.css';
-        $version = filemtime($css_file); // Отримуємо час останньої зміни файлу
+        $css_version = filemtime($css_file); // Отримуємо час останньої зміни файлу
 
         wp_enqueue_style(
             'api-connector-admin-style',
             $css_url,
             array(),
-            $version // Додаємо версію на основі часу зміни файлу
+            $css_version // Додаємо версію на основі часу зміни файлу
+        );
+
+        // Підключення скриптів
+        $js_file = plugin_dir_path(__FILE__) . 'assets/admin.js';
+        $js_url = plugin_dir_url(__FILE__) . 'assets/admin.js';
+        $js_version = filemtime($js_file); // Отримуємо час останньої зміни файлу
+
+        wp_enqueue_script(
+            'api-connector-admin-js',
+            $js_url,
+            array('jquery'),
+            $js_version, // Додаємо версію на основі часу зміни файлу
+            true
         );
     }
 }
-add_action('admin_enqueue_scripts', 'api_connector_admin_styles');
+add_action('admin_enqueue_scripts', 'api_connector_admin_scripts');
 
+// AJAX обробник для збереження вибору API
+function save_api_selection_ajax() {
+    if (!isset($_POST['post_id']) || !isset($_POST['api_selection'])) {
+        wp_send_json_error('Invalid data');
+        return;
+    }
+
+    $post_id = intval($_POST['post_id']);
+    $api_selection = sanitize_text_field($_POST['api_selection']);
+
+    update_post_meta($post_id, '_selected_api', $api_selection);
+
+    // Після збереження перезавантажуємо мета-бокс "API Settings"
+    ob_start();
+    $metabox = new API_Settings_Metabox();
+    $metabox->render_api_settings_metabox(get_post($post_id));
+    $content = ob_get_clean();
+
+    wp_send_json_success($content);
+}
+add_action('wp_ajax_save_api_selection', 'save_api_selection_ajax');

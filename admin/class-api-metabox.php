@@ -31,7 +31,7 @@ class API_Metabox {
         echo '<div class="api-connector-metabox">';
         ?>
         <label for="api_selection_field"><?php _e('Choose an API:', 'api-connector'); ?></label>
-        <select name="api_selection_field" id="api_selection_field" onchange="jQuery('#post').submit();">
+        <select name="api_selection_field" id="api_selection_field">
             <option value=""><?php _e('Select an API', 'api-connector'); ?></option>
             <?php
             foreach (glob(plugin_dir_path(__FILE__) . '../api/class-*-api.php') as $filename) {
@@ -62,6 +62,7 @@ class API_Metabox {
         <?php
         echo '</div>'; // Закриваємо div з класом "api-connector-metabox"
     }
+    
     
 
     public function save_api_selection($post_id) {
