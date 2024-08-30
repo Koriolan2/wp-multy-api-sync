@@ -1,0 +1,77 @@
+/* Основні стилі для мета-боксів плагіна */
+.api-connector-metabox {
+    margin: 0 -12px; /* Забираємо відступи для мета-боксу */
+    padding: 10px 12px; /* Додаємо внутрішні відступи для кращої читабельності */
+}
+
+.api-connector-metabox label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px; /* Додаємо більше простору під етикеткою */
+    color: #333; /* Темніший колір тексту для контрасту */
+}
+
+.api-connector-metabox select,
+.api-connector-metabox input[type="text"],
+.api-connector-metabox input[type="number"],
+.api-connector-metabox input[type="time"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px; /* Відступ між полями */
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    background-color: #fff; /* Біліший фон для полів введення */
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.api-connector-metabox select {
+    /* height: 36px; Висота для випадаючого списку */
+    padding: 6px 12px; /* Внутрішні відступи */
+    background-color: #fff; /* Збіг фону з іншими полями */
+    border: 1px solid #ccd0d4; /* Однакова рамка для всіх полів */
+    border-radius: 4px; /* Згладжені кути */
+    font-size: 14px; /* Відповідний розмір шрифту */
+    -webkit-appearance: none; /* Забираємо стандартний стиль браузера */
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMCAxMCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIj48cGF0aCBkPSJNNSA3bC00LTQgMS0xIDMgMyAzLTMgMSAxem0wLTFsNC00LTEgMS0zIDMtMy0zLTEtMS00IDQtNC0xLTEtM3YxMHYtMTB6Ii8+PC9zdmc+); /* Додаємо власний значок стрілки */
+    background-position: right 10px center; /* Розташування значка */
+    background-repeat: no-repeat;
+}
+
+.api-connector-metabox select:focus,
+.api-connector-metabox input[type="text"]:focus,
+.api-connector-metabox input[type="number"]:focus,
+.api-connector-metabox input[type="time"]:focus {
+    border-color: #007cba; /* Колір рамки при фокусі */
+    outline: none; /* Забираємо стандартний контур фокусу */
+    box-shadow: 0 0 5px rgba(0, 123, 186, 0.5); /* Додаємо легку тінь при фокусі */
+}
+
+.api-connector-metabox p {
+    font-size: 14px;
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 15px; /* Відступи для абзаців */
+}
+
+.api-connector-metabox .notice {
+    background-color: #f0f0f0;
+    border-left: 4px solid #00a0d2;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    font-size: 14px; /* Розмір шрифту для повідомлень */
+    color: #555; /* Колір тексту повідомлення */
+}
+
+.api-connector-metabox .notice.error {
+    border-left-color: #dc3232;
+    background-color: #f9e2e2;
+}
+
+.api-connector-metabox .notice.success {
+    border-left-color: #46b450;
+    background-color: #e7f7e5;
+}
