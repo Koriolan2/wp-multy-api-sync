@@ -5,6 +5,7 @@
 
 class Shopify_API {
     public $api_name = 'Shopify';
+    public $has_schedule_settings = true; // Цей API підтримує налаштування графіка
 
     public function __construct() {
         // Можливі інші ініціалізації

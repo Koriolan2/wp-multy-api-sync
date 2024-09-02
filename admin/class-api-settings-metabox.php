@@ -25,9 +25,10 @@ class API_Settings_Metabox {
     }
 
     public function render_api_settings_metabox($post) {
+        // Отримуємо обране API
         $selected_api = get_post_meta($post->ID, '_selected_api', true);
         if (!$selected_api) {
-            echo __('Please select an API first.', 'api-connector');
+            echo '<div class="select-api-notice">' . __('Please select an API first.', 'api-connector') . '</div>';
             return;
         }
     
@@ -64,7 +65,6 @@ class API_Settings_Metabox {
     
         echo '</div>'; // Закриваємо div з класом "api-connector-metabox"
     }
-    
 
     public function save_api_settings($post_id) {
         $selected_api = get_post_meta($post_id, '_selected_api', true);

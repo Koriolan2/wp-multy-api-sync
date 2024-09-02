@@ -75,3 +75,15 @@
     border-left-color: #46b450;
     background-color: #e7f7e5;
 }
+
+/* Стилізація для повідомлення, коли API не вибрано */
+.select-api-notice {
+    background-color: #fffbcc;
+    border-left: 4px solid #ffba00;
+    color: #555;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+}

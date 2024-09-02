@@ -5,6 +5,7 @@
 
 class Mester_API {
     public $api_name = 'Mester';
+    public $has_schedule_settings = true; // Цей API не підтримує налаштування графіка
 
     public function __construct() {
         // Можливі інші ініціалізації

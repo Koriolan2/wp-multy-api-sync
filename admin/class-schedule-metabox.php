@@ -26,14 +26,31 @@ class Schedule_Metabox {
     public function render_schedule_metabox($post) {
         // Отримуємо обране API
         $selected_api = get_post_meta($post->ID, '_selected_api', true);
-
         if (!$selected_api) {
-            // Не відображаємо мета-бокс, якщо API не вибрано
             echo '<p>' . __('Please select an API to configure the schedule settings.', 'api-connector') . '</p>';
             return;
         }
 
-        // Відображаємо мета-бокс, якщо API вибрано
+        // Завантажуємо відповідний клас API та перевіряємо, чи підтримує він налаштування графіку
+        foreach (glob(plugin_dir_path(__FILE__) . '../api/class-*-api.php') as $filename) {
+            $class_name = str_replace('class-', '', basename($filename, '.php'));
+            $class_name = str_replace('-', '_', $class_name);
+            $class_name = ucfirst($class_name);
+
+            require_once $filename;
+
+            if (class_exists($class_name)) {
+                $api_instance = new $class_name();
+                if ($api_instance->api_name === $selected_api) {
+                    if (!$api_instance->has_schedule_settings) {
+                        echo '<p>' . __('This API does not support schedule settings.', 'api-connector') . '</p>';
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Відображаємо мета-бокс, якщо API підтримує налаштування графіку
         ?>
         <div class="api-connector-metabox">
             <label for="schedule_interval"><?php _e('Interval (in hours):', 'api-connector'); ?></label>

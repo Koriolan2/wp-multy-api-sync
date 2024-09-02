@@ -3,6 +3,12 @@ jQuery(document).ready(function ($) {
         var apiSelection = $(this).val();
         var postId = $('#post_ID').val();
 
+        // Очищаємо попередні поля в мета-боксах "API Settings" та "Schedule Settings"
+        console.log("Clearing API Settings and Schedule Settings");
+        $('#api_settings .inside').empty();
+        $('#schedule_settings .inside').empty();
+
+        console.log("Sending AJAX request...");
         $.ajax({
             url: ajaxurl,
             type: 'post',
@@ -13,11 +19,12 @@ jQuery(document).ready(function ($) {
             },
             success: function (response) {
                 if (response.success) {
-                    // Оновлюємо вміст мета-боксу "API Settings"
-                    $('#api_settings .inside').html(response.data);
+                    // Оновлюємо вміст мета-боксів "API Settings" та "Schedule Settings"
+                    $('#api_settings .inside').html(response.data.api_settings);
+                    $('#schedule_settings .inside').html(response.data.schedule_settings);
                 } else {
                     // Обробка помилки, якщо потрібно
-                    alert('Error updating API Settings');
+                    alert('Error updating API Settings and Schedule Settings');
                 }
             },
         });

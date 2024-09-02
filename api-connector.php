@@ -80,14 +80,23 @@ function save_api_selection_ajax() {
     $post_id = intval($_POST['post_id']);
     $api_selection = sanitize_text_field($_POST['api_selection']);
 
+    // Оновлюємо мета-дані для вибраного API
     update_post_meta($post_id, '_selected_api', $api_selection);
 
-    // Після збереження перезавантажуємо мета-бокс "API Settings"
+    // Перезавантажуємо мета-бокси "API Settings" та "Schedule Settings"
     ob_start();
     $metabox = new API_Settings_Metabox();
     $metabox->render_api_settings_metabox(get_post($post_id));
-    $content = ob_get_clean();
+    $api_settings_content = ob_get_clean();
 
-    wp_send_json_success($content);
+    ob_start();
+    $schedule_metabox = new Schedule_Metabox();
+    $schedule_metabox->render_schedule_metabox(get_post($post_id));
+    $schedule_settings_content = ob_get_clean();
+
+    wp_send_json_success([
+        'api_settings' => $api_settings_content,
+        'schedule_settings' => $schedule_settings_content
+    ]);
 }
 add_action('wp_ajax_save_api_selection', 'save_api_selection_ajax');
